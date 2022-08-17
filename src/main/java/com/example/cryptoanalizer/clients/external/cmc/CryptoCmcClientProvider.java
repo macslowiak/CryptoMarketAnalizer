@@ -2,9 +2,12 @@ package com.example.cryptoanalizer.clients.external.cmc;
 
 import com.example.cryptoanalizer.clients.external.cmc.model.CmcListingStatus;
 import com.example.cryptoanalizer.clients.external.cmc.model.CryptocurrencyDto;
+import com.example.cryptoanalizer.models.Blockchain;
+import com.example.cryptoanalizer.models.Cryptocurrency;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +23,7 @@ public class CryptoCmcClientProvider {
     }
 
 
-    public List<CryptocurrencyDto> getCryptocurrenciesWithStatus(CmcListingStatus cmcListingStatus) {
+    public List<Cryptocurrency> getCryptocurrenciesWithStatus(CmcListingStatus cmcListingStatus) {
         String endpoint = "/v1/cryptocurrency/map";
         String listingStatus;
 
@@ -37,7 +40,33 @@ public class CryptoCmcClientProvider {
             put("limit", String.valueOf(MAX_REQUEST_SIZE));
         }};
 
-        return requestRepeater(endpoint, requestParams);
+        return createCryptocurrencyFrom(
+                requestRepeater(endpoint, requestParams)
+        );
+    }
+
+    public List<Cryptocurrency> createCryptocurrencyFrom(List<CryptocurrencyDto> cryptocurrencyDtoList) {
+        List<Cryptocurrency> cryptocurrencies = new ArrayList<>();
+        if (cryptocurrencyDtoList == null || cryptocurrencyDtoList.equals(Collections.emptyList())) {
+            return cryptocurrencies;
+        }
+        cryptocurrencyDtoList.forEach(cryptocurrencyDto ->
+                {
+                    var cryptocurrency = Cryptocurrency.builder()
+                            .name(cryptocurrencyDto.getName())
+                            .symbol(cryptocurrencyDto.getSymbol())
+                            .build();
+                    if (cryptocurrencyDto.getPlatform() != null) {
+                        var blockchain = Blockchain.builder()
+                                .name(cryptocurrencyDto.getPlatform().getName())
+                                .symbol(cryptocurrencyDto.getPlatform().getSymbol()).build();
+                        cryptocurrency.setBlockchain(blockchain);
+                        cryptocurrency.setAddress(cryptocurrencyDto.getPlatform().getTokenAddress());
+                    }
+                    cryptocurrencies.add(cryptocurrency);
+                }
+        );
+        return cryptocurrencies;
     }
 
     private List<CryptocurrencyDto> requestRepeater(String endpoint, Map<String, String> requestParams) {
@@ -47,14 +76,10 @@ public class CryptoCmcClientProvider {
 
         do {
             var requestResponse = cmcClient.getAllCryptocurrencies(endpoint, requestParams);
-            if (requestResponse.getData().size() >= MAX_REQUEST_SIZE) {
-                iteration += MAX_REQUEST_SIZE;
-                requestParams.put("start", String.valueOf(iteration));
-                isMoreThanRequestSize = true;
-                response.addAll(requestResponse.getData());
-            } else {
-                isMoreThanRequestSize = false;
-            }
+            iteration += MAX_REQUEST_SIZE;
+            requestParams.put("start", String.valueOf(iteration));
+            response.addAll(requestResponse.getData());
+            isMoreThanRequestSize = requestResponse.getData().size() >= MAX_REQUEST_SIZE;
         } while (isMoreThanRequestSize);
 
         return response;
