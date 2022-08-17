@@ -1,15 +1,21 @@
 package com.example.cryptoanalizer.clients.external.cmc.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CryptocurrencyDto {
-
-    private BigInteger id;
     private String name;
+    private String symbol;
     private PlatformDto platform;
 
+    //todo: DODAC DATE
+    private LocalDateTime dateOfFirstHistoricalData;
 }
-
