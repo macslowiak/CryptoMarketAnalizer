@@ -1,7 +1,7 @@
 package com.example.cryptoanalizer.services.database;
 
-import com.example.cryptoanalizer.clients.external.cmc.CryptoCmcClientProvider;
-import com.example.cryptoanalizer.clients.external.cmc.model.CmcListingStatus;
+import com.example.cryptoanalizer.clients.external.rest.cmc.CryptoCmcClientProvider;
+import com.example.cryptoanalizer.clients.external.rest.cmc.models.CmcListingStatus;
 import com.example.cryptoanalizer.models.Cryptocurrency;
 import com.example.cryptoanalizer.repositories.BlockchainRepository;
 import com.example.cryptoanalizer.repositories.CryptocurrencyRepository;

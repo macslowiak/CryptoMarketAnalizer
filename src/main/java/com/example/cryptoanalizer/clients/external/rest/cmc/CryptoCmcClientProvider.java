@@ -1,7 +1,7 @@
-package com.example.cryptoanalizer.clients.external.cmc;
+package com.example.cryptoanalizer.clients.external.rest.cmc;
 
-import com.example.cryptoanalizer.clients.external.cmc.model.CmcListingStatus;
-import com.example.cryptoanalizer.clients.external.cmc.model.CryptocurrencyDto;
+import com.example.cryptoanalizer.clients.external.rest.cmc.models.CmcListingStatus;
+import com.example.cryptoanalizer.clients.external.rest.cmc.models.CryptocurrencyDto;
 import com.example.cryptoanalizer.models.Blockchain;
 import com.example.cryptoanalizer.models.Cryptocurrency;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.cryptoanalizer.clients.external.cmc.CmcClientConfiguration.MAX_REQUEST_SIZE;
+import static com.example.cryptoanalizer.clients.external.rest.cmc.configuration.CmcClientConfiguration.MAX_REQUEST_SIZE;
 
 @Component
 public class CryptoCmcClientProvider {

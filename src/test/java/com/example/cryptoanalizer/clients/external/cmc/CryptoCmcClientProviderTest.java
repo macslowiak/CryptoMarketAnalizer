@@ -1,9 +1,11 @@
 package com.example.cryptoanalizer.clients.external.cmc;
 
-import com.example.cryptoanalizer.clients.external.cmc.model.CmcListingStatus;
-import com.example.cryptoanalizer.clients.external.cmc.model.CryptocurrencyDto;
-import com.example.cryptoanalizer.clients.external.cmc.model.PlatformDto;
-import com.example.cryptoanalizer.clients.external.cmc.model.RequestDto;
+import com.example.cryptoanalizer.clients.external.rest.cmc.CmcClient;
+import com.example.cryptoanalizer.clients.external.rest.cmc.CryptoCmcClientProvider;
+import com.example.cryptoanalizer.clients.external.rest.cmc.models.CmcListingStatus;
+import com.example.cryptoanalizer.clients.external.rest.cmc.models.CryptocurrencyDto;
+import com.example.cryptoanalizer.clients.external.rest.cmc.models.PlatformDto;
+import com.example.cryptoanalizer.clients.external.rest.cmc.models.RequestDto;
 import com.example.cryptoanalizer.models.Blockchain;
 import com.example.cryptoanalizer.models.Cryptocurrency;
 import org.junit.jupiter.api.BeforeEach;
