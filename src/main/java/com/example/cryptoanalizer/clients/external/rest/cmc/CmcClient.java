@@ -1,6 +1,7 @@
-package com.example.cryptoanalizer.clients.external.cmc;
+package com.example.cryptoanalizer.clients.external.rest.cmc;
 
-import com.example.cryptoanalizer.clients.external.cmc.model.RequestDto;
+import com.example.cryptoanalizer.clients.external.rest.cmc.configuration.CmcClientConfiguration;
+import com.example.cryptoanalizer.clients.external.rest.cmc.models.RequestDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Map;
 
-@FeignClient(value = "cmcClient",
+@FeignClient(name = "cmcClient",
         url = "https://pro-api.coinmarketcap.com",
         configuration = CmcClientConfiguration.class)
 public interface CmcClient {
