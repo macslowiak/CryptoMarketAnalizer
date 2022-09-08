@@ -1,4 +1,4 @@
-package com.example.cryptoanalizer.clients.external.cmc.model;
+package com.example.cryptoanalizer.clients.external.rest.cmc.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
