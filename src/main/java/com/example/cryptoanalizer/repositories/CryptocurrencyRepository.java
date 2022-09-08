@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface CryptocurrencyRepository extends JpaRepository<Cryptocurrency, UUID> {
-    List<Cryptocurrency> findByBlockchain_Name(String blockchainName);
+    List<Cryptocurrency> findByBlockchain_Symbol(String blockchainName);
 }

@@ -32,7 +32,6 @@ public class CmcCryptoFetcherService extends CryptoFetcher implements CryptoFetc
 
 
     @Override
-    @Transactional
     public void fetchCryptoDataToDb() {
 
         List<Cryptocurrency> cryptocurrencyList = new ArrayList<>() {{
@@ -63,6 +62,8 @@ public class CmcCryptoFetcherService extends CryptoFetcher implements CryptoFetc
         log.info("Saving new cryptocurrencies to database...");
 
         cryptocurrencyRepository.saveAll(cryptocurrenciesToSave);
+
+        log.info("Cryptocurrencies were saved to database");
 
     }
 

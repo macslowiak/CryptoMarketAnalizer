@@ -9,6 +9,6 @@ public class CryptocurrencyDataService {
 
     public static boolean isCryptoIdAlreadyInDatabase(List<CryptocurrencyData> data, Cryptocurrency cryptocurrency) {
         return data.stream()
-                .anyMatch(singleCryptoData -> singleCryptoData.getId() == cryptocurrency.getId());
+                .anyMatch(singleCryptoData -> singleCryptoData.getId().equals(cryptocurrency.getId()));
     }
 }

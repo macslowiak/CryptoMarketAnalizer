@@ -43,7 +43,7 @@ public class BscScanFetcherService implements CryptoFetcherService {
     This method sort them out and create BSC blockchain if not exists.
      */
     public void excludeBscTokensFromBnbBlockchain() {
-        List<Cryptocurrency> bnbChainCryptocurrencies = cryptocurrencyRepository.findByBlockchain_Name("BNB");
+        List<Cryptocurrency> bnbChainCryptocurrencies = cryptocurrencyRepository.findByBlockchain_Symbol("BNB");
         int firstObjectFromPackage = 0;
         int maxTries = 5;
         int tries = 0;
@@ -51,7 +51,7 @@ public class BscScanFetcherService implements CryptoFetcherService {
         saveBscBlockchainIfNotExists();
         Blockchain bscBlockchain = blockchainRepository.findBySymbol("BSC");
         log.info("Separating BSC addresses from BNB and addresses with wrong format..." +
-                "Operation can take around: " + bnbChainCryptocurrencies.size() / 300 + " minutes");
+                "Operation can take around: " + bnbChainCryptocurrencies.size() / 100 + " minutes");
 
         do {
             try {
@@ -63,7 +63,6 @@ public class BscScanFetcherService implements CryptoFetcherService {
                 Map<String, Boolean> mappedTokens = bscScanClientProvider.isBscToken(packagedCryptocurrencies);
 
                 packagedCryptocurrencies.forEach(cryptocurrency -> {
-                    System.out.println(cryptocurrency.getAddress());
                     if (mappedTokens.get(cryptocurrency.getAddress())) {
                         cryptocurrency.setBlockchain(bscBlockchain);
                     }
@@ -100,22 +99,20 @@ public class BscScanFetcherService implements CryptoFetcherService {
     }
 
     public void fetchBscTokensCreationDates() {
-        List<Cryptocurrency> bscChainCryptocurrencies = cryptocurrencyRepository.findByBlockchain_Name("BSC");
+        List<Cryptocurrency> bscChainCryptocurrencies = cryptocurrencyRepository.findByBlockchain_Symbol("BSC");
         List<CryptocurrencyData> cryptocurrencyData = cryptocurrencyDataRepository.findAll();
 
         log.info("Getting BSC tokens creation dates... " +
-                "Operation can take around: " + bscChainCryptocurrencies.size() / 300 + " minutes");
+                "Operation can take around: " + (bscChainCryptocurrencies.size() - cryptocurrencyData.size()) / 90 + " minutes");
         for (Cryptocurrency cryptocurrency : bscChainCryptocurrencies) {
-            if (CryptocurrencyDataService.isCryptoIdAlreadyInDatabase(cryptocurrencyData, cryptocurrency)) {
+            if (!CryptocurrencyDataService.isCryptoIdAlreadyInDatabase(cryptocurrencyData, cryptocurrency)) {
                 LocalDate tempDate = bscScanClientProvider.getTokenCreationDate(cryptocurrency.getAddress());
-                if (tempDate != LocalDate.MIN) {
-                    CryptocurrencyData cryptocurrencyDataToSave = CryptocurrencyData.builder()
-                            .id(cryptocurrency.getId())
-                            .cryptocurrency(cryptocurrency)
-                            .creationDate(tempDate)
-                            .build();
-                    cryptocurrencyData.add(cryptocurrencyDataToSave);
-                }
+                CryptocurrencyData cryptocurrencyDataToSave = CryptocurrencyData.builder()
+                        .id(cryptocurrency.getId())
+                        .cryptocurrency(cryptocurrency)
+                        .creationDate(tempDate)
+                        .build();
+                cryptocurrencyData.add(cryptocurrencyDataToSave);
             }
         }
         cryptocurrencyDataRepository.saveAll(cryptocurrencyData);
