@@ -7,8 +7,8 @@ import java.util.List;
 
 public class CryptocurrencyDataService {
 
-    public static boolean isCryptoIdAlreadyInDatabase(List<CryptocurrencyData> data, Cryptocurrency cryptocurrency) {
-        return data.stream()
+    public static boolean isCryptoIdAlreadyInProvidedDb(List<CryptocurrencyData> db, Cryptocurrency cryptocurrency) {
+        return db.stream()
                 .anyMatch(singleCryptoData -> singleCryptoData.getId().equals(cryptocurrency.getId()));
     }
 }

@@ -47,7 +47,6 @@ public class BscScanClientProvider {
                 .getContractCreationDate();
         log.debug("Timestamp (creation of token): " + timeStamp);
         return LocalDate.ofInstant(Instant.ofEpochSecond(timeStamp), TimeZone.getDefault().toZoneId());
-
     }
 
     public Map<String, Boolean> isBscToken(List<Cryptocurrency> cryptocurrenciesToScan) {
@@ -80,7 +79,7 @@ public class BscScanClientProvider {
 
             } catch (DecodeException exception) {
                 if (exception.getMessage().contains("Error! Invalid address format")) {
-                    log.debug("Address is not BSC address: " + address + " Returning possible earliest date");
+                    log.debug("Address is not BSC address: " + address);
                     addressesWithResult.put(address, false);
                 } else {
                     throw exception;

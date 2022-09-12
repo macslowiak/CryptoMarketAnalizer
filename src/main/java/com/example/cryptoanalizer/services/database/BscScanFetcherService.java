@@ -51,7 +51,7 @@ public class BscScanFetcherService implements CryptoFetcherService {
         saveBscBlockchainIfNotExists();
         Blockchain bscBlockchain = blockchainRepository.findBySymbol("BSC");
         log.info("Separating BSC addresses from BNB and addresses with wrong format..." +
-                "Operation can take around: " + bnbChainCryptocurrencies.size() / 100 + " minutes");
+                "Operation can take around: " + bnbChainCryptocurrencies.size() / 120 + " minutes");
 
         do {
             try {
@@ -68,7 +68,7 @@ public class BscScanFetcherService implements CryptoFetcherService {
                     }
                 });
 
-                cryptocurrencyRepository.saveAll(bnbChainCryptocurrencies);
+                cryptocurrencyRepository.saveAll(packagedCryptocurrencies);
                 firstObjectFromPackage += AMOUNT_OF_OBJECTS_IN_PACKAGED_REQUESTS;
                 tries = 0;
 
@@ -81,16 +81,16 @@ public class BscScanFetcherService implements CryptoFetcherService {
                 try {
                     Thread.sleep(1000);
                     tries++;
-                    log.info("Got null pointer exception. Retry operation: " + tries + " attempt/" + maxTries);
+                    log.info("Got null pointer exception. Retry operation: " + tries + " attempt / " + maxTries);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
 
                 if (tries == maxTries) {
+                    log.warn("To much tries. " + Math.min((firstObjectFromPackage + AMOUNT_OF_OBJECTS_IN_PACKAGED_REQUESTS),
+                            bnbChainCryptocurrencies.size()) + " items were skipped");
                     firstObjectFromPackage += AMOUNT_OF_OBJECTS_IN_PACKAGED_REQUESTS;
                     tries = 0;
-                    log.warn("To much tries. Items: " + firstObjectFromPackage + " were skipped because" +
-                            " one of the items was empty");
                 }
             }
         } while (firstObjectFromPackage < bnbChainCryptocurrencies.size());
@@ -103,9 +103,9 @@ public class BscScanFetcherService implements CryptoFetcherService {
         List<CryptocurrencyData> cryptocurrencyData = cryptocurrencyDataRepository.findAll();
 
         log.info("Getting BSC tokens creation dates... " +
-                "Operation can take around: " + (bscChainCryptocurrencies.size() - cryptocurrencyData.size()) / 90 + " minutes");
+                "Operation can take around: " + (bscChainCryptocurrencies.size() - cryptocurrencyData.size()) / 100 + " minutes");
         for (Cryptocurrency cryptocurrency : bscChainCryptocurrencies) {
-            if (!CryptocurrencyDataService.isCryptoIdAlreadyInDatabase(cryptocurrencyData, cryptocurrency)) {
+            if (!CryptocurrencyDataService.isCryptoIdAlreadyInProvidedDb(cryptocurrencyData, cryptocurrency)) {
                 LocalDate tempDate = bscScanClientProvider.getTokenCreationDate(cryptocurrency.getAddress());
                 CryptocurrencyData cryptocurrencyDataToSave = CryptocurrencyData.builder()
                         .id(cryptocurrency.getId())
